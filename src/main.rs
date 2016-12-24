@@ -10,6 +10,8 @@ use diesel::prelude::*;
 use diesel_rocket::*;
 use diesel_rocket::schema::posts;
 use rocket_contrib::Template;
+use rocket::response::Redirect;
+use rocket::request::Form;
 
 #[get("/")]
 fn index() -> Template {
@@ -20,6 +22,22 @@ fn index() -> Template {
     Template::render("index", &context)
 }
 
+#[get("/posts/new")]
+fn new_post() -> Template {
+    let context = map!["title" => "New Post"];
+    Template::render("new_post", &context)
+}
+
+#[post("/posts", data = "<post>")]
+fn create_post(post: Form<NewPost>) -> Redirect {
+    let connection = connection();
+    diesel::insert(post.get())
+        .into(posts::table)
+        .execute(&connection)
+        .expect("Failed to create post");
+    Redirect::found("/")
+}
+
 fn main() {
-    rocket::ignite().mount("/", routes![index]).launch();
+    rocket::ignite().mount("/", routes![index, new_post, create_post]).launch();
 }

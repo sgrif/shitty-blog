@@ -1,9 +1,11 @@
-#![feature(proc_macro)]
+#![feature(proc_macro, plugin, custom_derive)]
+#![plugin(rocket_codegen)]
 
 #[macro_use] extern crate diesel;
 #[macro_use] extern crate diesel_codegen;
 #[macro_use] extern crate serde_derive;
 extern crate dotenv;
+extern crate rocket;
 
 pub mod schema;
 
@@ -11,9 +13,18 @@ use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use std::env;
 
+use self::schema::posts;
+
 #[derive(Debug, PartialEq, Eq, Serialize, Queryable)]
 pub struct Post {
     id: i64,
+    title: String,
+    body: String,
+}
+
+#[derive(Debug, Insertable, FromForm)]
+#[table_name="posts"]
+pub struct NewPost {
     title: String,
     body: String,
 }

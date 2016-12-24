@@ -7,4 +7,5 @@
       {{ post.body }}
     </div>
   {% endfor %}
+  <a href="/posts/new">New Post</a>
 {% endblock content %}
