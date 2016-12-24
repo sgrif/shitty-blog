@@ -1,22 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>
-      {% if title is defined %}
-        {{ title }}
-      {% else %}
-        My Blog
-      {% endif %}
-    </title>
-  </head>
-  <body>
-    <h2>Showing {{ posts | length }} Posts</h2>
-    {% for post in posts %}
-      <div id="post-{{ post.id }}" class="post">
-        <h3>{{ post.title }}</h3>
-        {{ post.body }}
-      </div>
-    {% endfor %}
-  </body>
-</html>
+{% extends "application.html.tera" %}
+{% block content %}
+  <h2>Showing {{ posts | length }} Posts</h2>
+  {% for post in posts %}
+    <div id="post-{{ post.id }}" class="post">
+      <h3>{{ post.title }}</h3>
+      {{ post.body }}
+    </div>
+  {% endfor %}
+{% endblock content %}

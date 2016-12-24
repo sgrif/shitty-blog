@@ -1,8 +1,17 @@
 #![feature(proc_macro)]
 
+#[macro_use] extern crate diesel;
+#[macro_use] extern crate diesel_codegen;
 #[macro_use] extern crate serde_derive;
+extern crate dotenv;
 
-#[derive(Debug, PartialEq, Eq, Serialize)]
+pub mod schema;
+
+use diesel::pg::PgConnection;
+use diesel::prelude::*;
+use std::env;
+
+#[derive(Debug, PartialEq, Eq, Serialize, Queryable)]
 pub struct Post {
     id: i64,
     title: String,
@@ -17,4 +26,12 @@ impl Post {
             body: body.into(),
         }
     }
+}
+
+pub fn connection() -> PgConnection {
+    let _ = dotenv::dotenv();
+    let database_url = env::var("DATABASE_URL")
+        .expect("DATABASE_URL must be set or be present in a .env file");
+    PgConnection::establish(&database_url)
+        .expect("Failed to establish database connection")
 }
