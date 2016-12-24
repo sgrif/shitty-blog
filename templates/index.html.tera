@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>
+      {% if title is defined %}
+        {{ title }}
+      {% else %}
+        My Blog
+      {% endif %}
+    </title>
+  </head>
+  <body>
+    Hello world!
+  </body>
+</html>
