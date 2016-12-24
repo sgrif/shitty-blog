@@ -38,6 +38,15 @@ fn create_post(post: Form<NewPost>) -> Redirect {
     Redirect::found("/")
 }
 
+#[delete("/posts/<id>")]
+fn delete_post(id: i64) -> Redirect {
+    let connection = connection();
+    diesel::delete(posts::table.find(id))
+        .execute(&connection)
+        .expect("Failed to delete post");
+    Redirect::found("/")
+}
+
 fn main() {
-    rocket::ignite().mount("/", routes![index, new_post, create_post]).launch();
+    rocket::ignite().mount("/", routes![index, new_post, create_post, delete_post]).launch();
 }
