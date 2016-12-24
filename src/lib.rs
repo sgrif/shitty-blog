@@ -8,3 +8,13 @@ pub struct Post {
     title: String,
     body: String,
 }
+
+impl Post {
+    pub fn new(id: i64, title: &str, body: &str) -> Self {
+        Post {
+            id: id,
+            title: title.into(),
+            body: body.into(),
+        }
+    }
+}
