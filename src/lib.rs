@@ -22,9 +22,9 @@ pub struct Post {
     body: String,
 }
 
-#[derive(Debug, Insertable, FromForm)]
+#[derive(Debug, Insertable, FromForm, AsChangeset)]
 #[table_name="posts"]
-pub struct NewPost {
+pub struct PostForm {
     title: String,
     body: String,
 }

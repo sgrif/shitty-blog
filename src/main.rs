@@ -1,10 +1,11 @@
-#![feature(plugin)]
+#![feature(plugin, proc_macro)]
 #![plugin(rocket_codegen)]
 
 extern crate diesel_rocket;
 extern crate rocket;
 #[macro_use] extern crate diesel;
 #[macro_use] extern crate rocket_contrib;
+#[macro_use] extern crate serde_derive;
 
 use diesel::prelude::*;
 use diesel_rocket::*;
@@ -29,7 +30,7 @@ fn new_post() -> Template {
 }
 
 #[post("/posts", data = "<post>")]
-fn create_post(post: Form<NewPost>) -> Redirect {
+fn create_post(post: Form<PostForm>) -> Redirect {
     let connection = connection();
     diesel::insert(post.get())
         .into(posts::table)
@@ -47,6 +48,36 @@ fn delete_post(id: i64) -> Redirect {
     Redirect::found("/")
 }
 
+#[get("/posts/<id>/edit")]
+fn edit_post(id: i64) -> Option<Template> {
+    #[derive(Serialize)]
+    struct Context {
+        title: &'static str,
+        post: Post,
+    }
+
+    let connection = connection();
+    let post = posts::table.find(id)
+        .first::<Post>(&connection)
+        .optional()
+        .expect("Failed to load post");
+    post.map(|post| {
+        let context = Context { title:  "Editing Post", post: post };
+        Template::render("edit_post", &context)
+    })
+}
+
+#[patch("/posts/<id>", data = "<post_data>")]
+fn update_post(id: i64, post_data: Form<PostForm>) -> Redirect {
+    let connection = connection();
+    let updated_rows = diesel::update(posts::table.find(id))
+        .set(post_data.get())
+        .execute(&connection)
+        .expect("Failed to update post");
+    assert_eq!(1, updated_rows, "Could not find a post to update");
+    Redirect::found("/")
+}
+
 fn main() {
-    rocket::ignite().mount("/", routes![index, new_post, create_post, delete_post]).launch();
+    rocket::ignite().mount("/", routes![index, new_post, create_post, delete_post, edit_post, update_post]).launch();
 }

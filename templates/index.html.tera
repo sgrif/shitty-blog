@@ -5,6 +5,7 @@
     <div id="post-{{ post.id }}" class="post">
       <h3>{{ post.title }}</h3>
       {{ post.body }}
+      <div><a href="/posts/{{ post.id }}/edit">Edit post</a></div>
       <form method="post" action="/posts/{{ post.id }}">
         <input type="hidden" name="_method" value="delete" />
         <input type="submit" value="Delete post" />
