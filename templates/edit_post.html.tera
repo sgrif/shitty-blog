@@ -1,0 +1,10 @@
+{% extends "application.html.tera" %}
+{% block content %}
+  <h1>Edit Post</h1>
+  <form method="post" action="/posts/{{ post.id }}">
+    <input type="hidden" name="_method" value="patch" />
+    <div><input type="text" name="title" value="{{ post.title }}"/></div>
+    <div><textarea name="body">{{ post.body }}</textarea></div>
+    <div><input type="submit" value="Update Post" /></div>
+  </form>
+{% endblock content %}
